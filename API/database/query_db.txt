@@ -1,0 +1,435 @@
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    email_verified_at TIMESTAMP NULL,
+    password VARCHAR(255) NOT NULL,
+    type VARCHAR(20) NOT NULL DEFAULT 'customer',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL
+);
+
+CREATE TABLE roles (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,       -- Ví dụ: super_admin, shop_owner, content_moderator
+    display_name VARCHAR(100) NULL,         -- Tên hiển thị: Quản trị nội dung
+    scope VARCHAR(20) NOT NULL DEFAULT 'global', -- 'global' hoặc 'shop' (phân biệt phạm vi)
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_type ON users(type);
+
+CREATE TABLE user_roles (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role_id INTEGER NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+    shop_id INTEGER NULL REFERENCES shops(id) ON DELETE CASCADE, -- Nếu scope là 'shop'
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (user_id, role_id, shop_id)
+);
+
+➕ Nếu role là shop_owner, order_staff... thì shop_id sẽ có giá trị.
+➕ Nếu role là admin, content_moderator, thì shop_id sẽ là NULL.
+
+CREATE TABLE permissions (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,      -- Ví dụ: manage_users, view_orders
+    display_name VARCHAR(100) NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE permission_role (
+    id SERIAL PRIMARY KEY,
+    role_id INTEGER NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+    permission_id INTEGER NOT NULL REFERENCES permissions(id) ON DELETE CASCADE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (role_id, permission_id)
+);
+
+CREATE TABLE user_profiles (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    avatar VARCHAR(255) NULL,
+    phone VARCHAR(20) NULL,
+    birthdate DATE NULL,
+    gender VARCHAR(10) NULL,
+    address TEXT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL
+);
+
+CREATE INDEX idx_user_profiles_user_id ON user_profiles(user_id);
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'document_type_enum') THEN
+        CREATE TYPE document_type_enum AS ENUM ('CCCD', 'Giấy phép kinh doanh', 'Đăng ký thuế');
+    END IF;
+END$$;
+
+CREATE TABLE shops (
+    id SERIAL PRIMARY KEY,
+    owner_id INTEGER NOT NULL UNIQUE REFERENCES users(id),
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    description TEXT NULL,
+    logo_url VARCHAR(255) NULL,
+    cover_image_url VARCHAR(255) NULL,
+
+    -- Thông tin địa chỉ (gộp chung)
+    phone VARCHAR(20) NOT NULL,
+    address TEXT NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    country VARCHAR(100) NOT NULL,
+
+    -- Thông tin quản lý
+    status VARCHAR(20) NOT NULL DEFAULT 'pending',
+    payment_methods JSONB NULL,
+    shipping_config JSONB NULL,
+    commission_rate DECIMAL(5,2) NOT NULL DEFAULT 0,
+
+    -- Timestamps
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL
+);
+
+-- Indexes
+CREATE INDEX idx_shops_owner ON shops(owner_id);
+CREATE INDEX idx_shops_status ON shops(status);
+CREATE INDEX idx_shops_city ON shops(city);
+
+CREATE TABLE shop_verifications (
+    id SERIAL PRIMARY KEY,
+    shop_id INTEGER NOT NULL REFERENCES shops(id),
+    document_type document_type_enum NOT NULL DEFAULT 'CCCD',
+    document_front_url VARCHAR(255) NOT NULL,
+    document_back_url VARCHAR(255) NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'pending',
+    rejection_reason TEXT NULL,
+    verified_by INTEGER NULL REFERENCES users(id),
+    verified_at TIMESTAMP NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL
+);
+
+-- Indexes for shop_verifications table
+CREATE INDEX idx_shop_verifications_shop_id ON shop_verifications(shop_id);
+CREATE INDEX idx_shop_verifications_status ON shop_verifications(status);
+CREATE INDEX idx_shop_verifications_verified_by ON shop_verifications(verified_by);
+CREATE INDEX idx_shop_verifications_document_type ON shop_verifications(document_type_id);
+
+CREATE TABLE system_categories (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    description TEXT NULL,
+    image_url VARCHAR(255) NULL,
+    parent_id INTEGER NULL REFERENCES system_categories(id),
+    order_position INT NOT NULL DEFAULT 0,
+    is_featured BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes cho danh mục chung
+CREATE INDEX idx_system_categories_parent ON system_categories(parent_id);
+CREATE INDEX idx_system_categories_slug ON system_categories(slug);
+
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
+    shop_id INTEGER NOT NULL REFERENCES shops(id),
+    category_id INTEGER NULL REFERENCES system_categories(id),
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    description TEXT NOT NULL,
+    price DECIMAL(12,2) NOT NULL,
+    compare_price DECIMAL(12,2) NULL,
+    quantity INTEGER NOT NULL DEFAULT 0,
+    sku VARCHAR(100) NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'draft',
+    rejection_reason TEXT NULL,
+    is_featured BOOLEAN NOT NULL DEFAULT FALSE,
+    tags JSONB NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL
+);
+
+-- Indexes
+CREATE INDEX idx_products_shop ON products(shop_id);
+CREATE INDEX idx_products_status ON products(status);
+CREATE INDEX idx_products_slug ON products(slug);
+
+CREATE TABLE product_images (
+    id SERIAL PRIMARY KEY,
+    product_id INTEGER NOT NULL REFERENCES products(id),
+    image_url VARCHAR(255) NOT NULL,
+    order_position INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Index
+CREATE INDEX idx_product_images_product ON product_images(product_id);
+
+CREATE TABLE product_variants (
+    id SERIAL PRIMARY KEY,
+    product_id INTEGER NOT NULL REFERENCES products(id),
+    name VARCHAR(100) NOT NULL, -- VD: "Màu sắc", "Kích thước"
+    value VARCHAR(100) NOT NULL, -- VD: "Đỏ", "XL"
+    price_adjustment DECIMAL(12,2) NOT NULL DEFAULT 0,
+    quantity INTEGER NOT NULL DEFAULT 0,
+    sku VARCHAR(100) NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes
+CREATE INDEX idx_product_variants_product ON product_variants(product_id);
+CREATE INDEX idx_product_variants_sku ON product_variants(sku);
+
+CREATE TABLE carts (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE cart_items (
+    id SERIAL PRIMARY KEY,
+    cart_id INTEGER NOT NULL REFERENCES carts(id) ON DELETE CASCADE,
+    product_id INTEGER NOT NULL REFERENCES products(id),
+    variant_id INTEGER NULL REFERENCES product_variants(id),
+    quantity INTEGER NOT NULL DEFAULT 1 CHECK (quantity > 0),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (cart_id, product_id, variant_id)
+);
+
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    order_number VARCHAR(50) UNIQUE NOT NULL,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    subtotal DECIMAL(12,2) NOT NULL,
+    shipping_fee DECIMAL(12,2) NOT NULL DEFAULT 0,
+    discount DECIMAL(12,2) NOT NULL DEFAULT 0,
+    total DECIMAL(12,2) NOT NULL,
+
+    -- Payment info
+    payment_method VARCHAR(50) NOT NULL,
+    payment_status VARCHAR(20) NOT NULL DEFAULT 'pending',
+    payment_reference VARCHAR(255) NULL,
+
+    -- Shipping info
+    shipping_method VARCHAR(50) NOT NULL,
+    shipping_address JSONB NOT NULL,
+    billing_address JSONB NULL,
+
+    -- Status
+    status VARCHAR(20) NOT NULL DEFAULT 'pending',
+    notes TEXT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE sub_orders (
+    id SERIAL PRIMARY KEY,
+    order_id INTEGER NOT NULL REFERENCES orders(id),
+    shop_id INTEGER NOT NULL REFERENCES shops(id),
+
+    -- Financials
+    subtotal DECIMAL(12,2) NOT NULL,
+    shipping_fee DECIMAL(12,2) NOT NULL,
+    commission DECIMAL(12,2) NOT NULL,
+    total DECIMAL(12,2) NOT NULL,
+
+    -- Status
+    status VARCHAR(20) NOT NULL DEFAULT 'pending',
+    cancellation_reason TEXT NULL,
+
+    -- Shipping
+    tracking_number VARCHAR(100) NULL,
+    shipping_carrier VARCHAR(50) NULL,
+    shipping_method VARCHAR(50) NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE order_items (
+    id SERIAL PRIMARY KEY,
+    order_id INTEGER NOT NULL REFERENCES orders(id),
+    sub_order_id INTEGER NOT NULL REFERENCES sub_orders(id),
+    product_id INTEGER NOT NULL REFERENCES products(id),
+    shop_id INTEGER NOT NULL REFERENCES shops(id),
+    variant_id INTEGER NULL REFERENCES product_variants(id),
+
+    -- Thông tin tại thời điểm mua (đề phòng thay đổi sau này)
+    product_name VARCHAR(255) NOT NULL,
+    variant_name VARCHAR(255) NULL,
+    price DECIMAL(12,2) NOT NULL ,
+    quantity INTEGER NOT NULL,
+    total_price DECIMAL(12,2) NOT NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes
+CREATE INDEX idx_order_items_order ON order_items(order_id);
+CREATE INDEX idx_order_items_suborder ON order_items(sub_order_id);
+CREATE INDEX idx_order_items_product ON order_items(product_id);
+CREATE INDEX idx_order_items_shop ON order_items(shop_id);
+
+-- Transactions table
+CREATE TABLE transactions (
+    id SERIAL PRIMARY KEY,
+    order_id INTEGER NOT NULL REFERENCES orders(id),
+    transaction_id VARCHAR(255) UNIQUE NOT NULL,
+    amount DECIMAL(12,2) NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    metadata JSONB NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Payouts table
+CREATE TABLE payouts (
+    id SERIAL PRIMARY KEY,
+    shop_id INTEGER NOT NULL REFERENCES shops(id),
+    amount DECIMAL(12,2) NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    reference VARCHAR(255) NULL,
+    status VARCHAR(20) NOT NULL,
+    notes TEXT NULL,
+    payout_date DATE NOT NULL,
+    processed_date DATE NULL,
+    processed_by INTEGER NULL REFERENCES users(id),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Payout items table
+CREATE TABLE payout_items (
+    id SERIAL PRIMARY KEY,
+    payout_id INTEGER NOT NULL REFERENCES payouts(id),
+    sub_order_id INTEGER NOT NULL REFERENCES sub_orders(id),
+    order_amount DECIMAL(12,2) NOT NULL,
+    commission DECIMAL(12,2) NOT NULL,
+    payout_amount DECIMAL(12,2) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Notifications table
+CREATE TABLE notifications (
+    id UUID PRIMARY KEY,
+    type VARCHAR(255) NOT NULL,
+    notifiable_type VARCHAR(255) NOT NULL,
+    notifiable_id INTEGER NOT NULL,
+    data TEXT NOT NULL,
+    read_at TIMESTAMP NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- INSERT DATA
+
+-- Global roles
+INSERT INTO roles (name, display_name, scope) VALUES
+  ('super_admin', 'Admin hệ thống', 'global'),
+  ('content_moderator', 'Admin kiểm duyệt', 'global'),
+  ('finance_admin', 'Admin tài chính', 'global'),
+  ('support_admin', 'Admin hỗ trợ', 'global');
+
+-- Shop-level roles
+INSERT INTO roles (name, display_name, scope) VALUES
+  ('shop_owner', 'Chủ shop', 'shop'),
+  ('inventory_manager', 'Quản lý kho', 'shop'),
+  ('order_staff', 'Quản lý đơn hàng', 'shop'),
+  ('support_agent', 'Chăm sóc khách hàng', 'shop');
+
+-- Global-level permissions
+INSERT INTO permissions (name, display_name) VALUES
+  ('manage_users', 'Quản lý người dùng'),
+  ('manage_roles', 'Quản lý vai trò'),
+  ('approve_shops', 'Duyệt cửa hàng'),
+  ('approve_products', 'Duyệt sản phẩm'),
+  ('process_payouts', 'Xử lý đối soát'),
+  ('view_reports', 'Xem báo cáo'),
+  ('handle_support_tickets', 'Xử lý hỗ trợ người dùng');
+
+-- Shop-level permissions
+INSERT INTO permissions (name, display_name) VALUES
+  ('manage_shop_info', 'Quản lý thông tin cửa hàng'),
+  ('manage_products', 'Quản lý sản phẩm'),
+  ('view_orders', 'Xem đơn hàng'),
+  ('process_orders', 'Xử lý đơn hàng'),
+  ('reply_reviews', 'Phản hồi đánh giá'),
+  ('manage_inventory', 'Quản lý kho hàng'),
+  ('manage_staff', 'Quản lý nhân viên shop');
+
+INSERT INTO permission_role (role_id, permission_id)
+SELECT r.id, p.id FROM roles r
+JOIN permissions p ON r.name = 'super_admin'
+WHERE p.name IN (
+  'manage_users',
+  'manage_roles',
+  'approve_shops',
+  'approve_products',
+  'process_payouts',
+  'view_reports',
+  'handle_support_tickets'
+);
+
+-- content_moderator
+INSERT INTO permission_role (role_id, permission_id)
+SELECT r.id, p.id FROM roles r
+JOIN permissions p ON p.name IN ('approve_shops', 'approve_products')
+WHERE r.name = 'content_moderator';
+
+-- finance_admin
+INSERT INTO permission_role (role_id, permission_id)
+SELECT r.id, p.id FROM roles r
+JOIN permissions p ON p.name IN ('process_payouts', 'view_reports')
+WHERE r.name = 'finance_admin';
+
+-- support_admin
+INSERT INTO permission_role (role_id, permission_id)
+SELECT r.id, p.id FROM roles r
+JOIN permissions p ON p.name = 'handle_support_tickets'
+WHERE r.name = 'support_admin';
+
+-- shop_owner
+INSERT INTO permission_role (role_id, permission_id)
+SELECT r.id, p.id FROM roles r
+JOIN permissions p ON p.name IN (
+  'manage_shop_info', 'manage_products', 'view_orders',
+  'process_orders', 'reply_reviews', 'manage_inventory', 'manage_staff'
+)
+WHERE r.name = 'shop_owner';
+
+-- inventory_manager
+INSERT INTO permission_role (role_id, permission_id)
+SELECT r.id, p.id FROM roles r
+JOIN permissions p ON p.name IN ('manage_products', 'manage_inventory')
+WHERE r.name = 'inventory_manager';
+
+-- order_staff
+INSERT INTO permission_role (role_id, permission_id)
+SELECT r.id, p.id FROM roles r
+JOIN permissions p ON p.name IN ('view_orders', 'process_orders')
+WHERE r.name = 'order_staff';
+
+-- support_agent
+INSERT INTO permission_role (role_id, permission_id)
+SELECT r.id, p.id FROM roles r
+JOIN permissions p ON p.name IN ('reply_reviews')
+WHERE r.name = 'support_agent';

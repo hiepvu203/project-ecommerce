@@ -1,0 +1,38 @@
+# --- Others ---
+*.log
+/auth.json
+/.cursor
+
+# --- Laravel ---
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+/storage/pail
+/storage/logs
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+.env
+.env.backup
+.env.production
+Homestead.json
+Homestead.yaml
+
+# --- Build artifacts ---
+/public/build
+/public/hot
+
+# --- IDE & tools ---
+/.idea
+/.vscode
+.phpunit.result.cache
+/.phpunit.cache
+.phpactor.json
+/.fleet
+/.nova
+/.zed
+
+# --- OS junk ---
+.DS_Store
+Thumbs.db
