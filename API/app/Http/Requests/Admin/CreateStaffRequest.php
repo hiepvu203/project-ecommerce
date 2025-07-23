@@ -27,7 +27,9 @@ class CreateStaffRequest extends BaseFormRequest
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'role'     => 'required|exists:roles,name',
+            // 'role'     => 'required|exists:roles,name',
+            'roles'    => 'required|array|min:1',
+            'roles.*'  => 'exists:roles,id',
         ];
     }
 
@@ -45,8 +47,12 @@ class CreateStaffRequest extends BaseFormRequest
             'password.string'    => 'Mật khẩu phải là chuỗi ký tự!',
             'password.min'       => 'Mật khẩu phải có ít nhất 8 ký tự!',
             'password.confirmed' => 'Xác nhận mật khẩu không khớp!',
-            'role.required' => 'Vai trò là bắt buộc!',
-            'role.exists'   => 'Vai trò không hợp lệ!',
+            // 'role.required' => 'Vai trò là bắt buộc!',
+            // 'role.exists'   => 'Vai trò không hợp lệ!',
+            'roles.required' => 'Vai trò là bắt buộc!',
+            'roles.array'    => 'Vai trò phải là một mảng!',
+            'roles.min'      => 'Phải chọn ít nhất một vai trò!',
+            'roles.*.exists' => 'Vai trò không hợp lệ!',
         ];
     }
 }

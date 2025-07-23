@@ -9,7 +9,6 @@ use App\Http\Requests\Admin\CreateStaffRequest;
 use App\Helpers\ApiResponse;
 use App\Http\Resources\UserResource;
 use App\Services\StaffService;
-use Illuminate\Http\Request;
 
 class StaffController extends Controller
 {

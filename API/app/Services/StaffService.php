@@ -28,12 +28,17 @@ class StaffService
                 'email_verified_at' => Carbon::now(),
             ]);
 
-            $role = $this->staffRepository->findRoleByName($data['role']);
-            if (!$role) {
-                throw new \Exception('Role does not exist.', 422);
-            }
+            // $role = $this->staffRepository->findRoleByName($data['role']);
+            // if (!$role) {
+            //     throw new \Exception('Role does not exist.', 422);
+            // }
 
-            $this->staffRepository->assignRoleToUser($user->id, $role->id);
+            // $this->staffRepository->assignRoleToUser($user->id, $role->id);
+
+            // Gán nhiều quyền cho user
+            foreach ($data['roles'] as $roleId) {
+                $this->staffRepository->assignRoleToUser($user->id, $roleId);
+            }
 
             $user->notify(new StaffAccountCreated($data['password']));
 
