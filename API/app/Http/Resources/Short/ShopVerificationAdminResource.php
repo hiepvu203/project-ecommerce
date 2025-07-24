@@ -13,6 +13,16 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * Summary of ShopVerificationAdminResource
  * @property mixed $shop
  */
+
+/**
+ * @OA\Schema(
+ *     schema="ShopVerificationAdminResource",
+ *     type="object",
+ *     @OA\Property(property="shop", ref="#/components/schemas/ShopResource"),
+ *     @OA\Property(property="verification", ref="#/components/schemas/ShopVerificationResource"),
+ *     @OA\Property(property="user", ref="#/components/schemas/UserShortResource")
+ * )
+ */
 class ShopVerificationAdminResource extends JsonResource
 {
     public function toArray(Request $request): array

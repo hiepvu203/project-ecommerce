@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
+/**
+ * Summary of Order
+ * @property int $id
+ * @property string $status
+ */
 class Order extends Model
 {
     protected $fillable = [

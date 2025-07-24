@@ -7,6 +7,15 @@ namespace App\Http\Requests\Admin;
 use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * @OA\Schema(
+ *     schema="PermissionRequest",
+ *     type="object",
+ *     required={"name"},
+ *     @OA\Property(property="name", type="string", maxLength=100, example="shop.manage.products"),
+ *     @OA\Property(property="display_name", type="string", maxLength=100, nullable=true, example="Quản lý sản phẩm")
+ * )
+ */
 class PermissionRequest extends BaseFormRequest
 {
     /**

@@ -16,6 +16,21 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property int $quantity
  * @property float $price_at_added
  */
+
+/**
+ * @OA\Schema(
+ *     schema="CartItemResource",
+ *     type="object",
+ *     title="Cart Item Resource",
+ *     @OA\Property(property="cart_id", type="integer", example=1, description="ID giỏ hàng"),
+ *     @OA\Property(property="product_id", type="integer", example=101, description="ID sản phẩm"),
+ *     @OA\Property(property="variant_id", type="integer", example=5, description="ID biến thể sản phẩm"),
+ *     @OA\Property(property="quantity", type="integer", example=2, description="Số lượng"),
+ *     @OA\Property(property="price_at_added", type="number", format="float", example=199000, description="Giá tại thời điểm thêm vào giỏ"),
+ *     @OA\Property(property="product", ref="#/components/schemas/ProductResource"),
+ *     @OA\Property(property="variant", ref="#/components/schemas/ProductVariantResource")
+ * )
+ */
 class CartItemResource extends JsonResource
 {
     /**

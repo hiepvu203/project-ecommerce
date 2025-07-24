@@ -10,7 +10,6 @@ use App\Http\Requests\Customer\UpdateCartItemRequest;
 use App\Http\Resources\CartResource;
 use App\Helpers\ApiResponse;
 use App\Http\Resources\CartItemResource;
-use App\Http\Resources\Short\CartItemShortResource;
 use App\Services\CartService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +20,23 @@ class CartController extends Controller
         protected CartService $cartService
     ) {}
 
+    /**
+     * @OA\Get(
+     *     path="/api/v1/customer/cart",
+     *     summary="Lấy thông tin giỏ hàng của người dùng hiện tại",
+     *     tags={"Customer - Cart"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Cart retrieved successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/CartResource")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No product added yet!"
+     *     )
+     * )
+     */
     public function index()
     {
         $user = Auth::user();
@@ -32,6 +48,31 @@ class CartController extends Controller
         return ApiResponse::success(['cart' => new CartResource($cart)], 'Cart retrieved successfully', 200);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/v1/customer/cart",
+     *     summary="Thêm sản phẩm vào giỏ hàng",
+     *     tags={"Customer - Cart"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/AddToCartRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Item added to cart successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/CartItemResource")
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error"
+     *     )
+     * )
+     */
     public function addToCart(AddToCartRequest $request)
     {
         try {
@@ -43,6 +84,40 @@ class CartController extends Controller
         }
     }
 
+    /**
+     * @OA\Put(
+     *     path="/api/v1/customer/cart/{itemId}",
+     *     summary="Cập nhật số lượng sản phẩm trong giỏ hàng",
+     *     tags={"Customer - Cart"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="itemId",
+     *         in="path",
+     *         required=true,
+     *         description="ID của cart item",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateCartItemRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Cart item updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="cart_item", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Item removed from cart"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error"
+     *     )
+     * )
+     */
     public function updateQuantity(UpdateCartItemRequest $request, int $itemId)
     {
         try {
@@ -61,6 +136,29 @@ class CartController extends Controller
         }
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/v1/customer/cart/{itemId}",
+     *     summary="Xóa một sản phẩm khỏi giỏ hàng",
+     *     tags={"Customer - Cart"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="itemId",
+     *         in="path",
+     *         required=true,
+     *         description="ID của cart item",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Item removed from cart successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error"
+     *     )
+     * )
+     */
     public function removeItem(int $itemId): JsonResponse
     {
         try {
@@ -73,6 +171,22 @@ class CartController extends Controller
         }
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/v1/customer/cart",
+     *     summary="Xóa toàn bộ giỏ hàng",
+     *     tags={"Customer - Cart"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Cart cleared successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error"
+     *     )
+     * )
+     */
     public function clearCart(): JsonResponse
     {
         try {

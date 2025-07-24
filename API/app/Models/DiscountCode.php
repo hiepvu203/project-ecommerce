@@ -20,6 +20,7 @@ use Illuminate\Support\Carbon;
  * @property float $value
  * @property float|null $min_order_amount
  * @property int|null $usage_limit
+ * @property int $used
  * @property int|null $usage_per_user
  * @property \Illuminate\Support\Carbon $start_at
  * @property \Illuminate\Support\Carbon $end_at

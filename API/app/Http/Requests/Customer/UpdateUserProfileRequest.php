@@ -6,6 +6,42 @@ namespace App\Http\Requests\Customer;
 
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * @OA\Schema(
+ *   schema="UpdateUserProfileRequest",
+ *   type="object",
+ *   @OA\Property(
+ *     property="avatar",
+ *     type="string",
+ *     format="binary",
+ *     description="Ảnh đại diện (jpg, jpeg, png, webp, max 2MB)"
+ *   ),
+ *   @OA\Property(
+ *     property="phone",
+ *     type="string",
+ *     pattern="^[0-9]{10}$",
+ *     example="0123456789"
+ *   ),
+ *   @OA\Property(
+ *     property="birthdate",
+ *     type="string",
+ *     format="date",
+ *     example="2000-01-01"
+ *   ),
+ *   @OA\Property(
+ *     property="address",
+ *     type="string",
+ *     maxLength=500,
+ *     example="123 Đường ABC, Quận 1, TP.HCM"
+ *   ),
+ *   @OA\Property(
+ *     property="gender",
+ *     type="string",
+ *     enum={"Nam", "Nữ", "Khác"},
+ *     example="Nam"
+ *   )
+ * )
+ */
 class UpdateUserProfileRequest extends BaseFormRequest
 {
     /**

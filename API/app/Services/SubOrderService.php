@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\StatusEnum;
 use App\Repositories\SubOrderRepository;
 use App\Models\SubOrder;
 
@@ -25,7 +26,7 @@ class SubOrderService
 
     public function approveSubOrder(SubOrder $subOrder): SubOrder
     {
-        if ($subOrder->status !== 'pending') {
+        if ($subOrder->status !== StatusEnum::PENDING->value) {
             throw new \Exception('Only pending orders can be approved.', 400);
         }
         return $this->subOrderRepository->approveSubOrder($subOrder);

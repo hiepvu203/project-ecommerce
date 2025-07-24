@@ -7,6 +7,23 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @OA\Schema(
+ *     schema="ShopVerificationResource",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=11),
+ *     @OA\Property(property="shop_id", type="integer", example=7),
+ *     @OA\Property(property="document_type", type="string", example="business_license"),
+ *     @OA\Property(property="document_front_url", type="string", format="url", example="https://cdn.example.com/docs/front.jpg"),
+ *     @OA\Property(property="document_back_url", type="string", format="url", nullable=true, example="https://cdn.example.com/docs/back.jpg"),
+ *     @OA\Property(property="status", type="string", example="pending"),
+ *     @OA\Property(property="rejection_reason", type="string", nullable=true, example="Document blurry"),
+ *     @OA\Property(property="verified_by", type="integer", nullable=true, example=4),
+ *     @OA\Property(property="verified_at", type="string", format="date-time", nullable=true),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time")
+ * )
+ */
 class ShopVerificationResource extends JsonResource
 {
     public function toArray(Request $request): array

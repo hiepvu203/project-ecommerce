@@ -6,6 +6,23 @@ namespace App\Http\Requests\Admin;
 
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="CreateStaffRequest",
+ *     type="object",
+ *     required={"name","email","password","password_confirmation","roles"},
+ *     @OA\Property(property="name", type="string", maxLength=255, example="Nguyễn Văn A"),
+ *     @OA\Property(property="email", type="string", format="email", maxLength=255, example="staff@example.com"),
+ *     @OA\Property(property="password", type="string", format="password", minLength=8, example="12345678"),
+ *     @OA\Property(property="password_confirmation", type="string", example="12345678"),
+ *     @OA\Property(
+ *         property="roles",
+ *         type="array",
+ *         minItems=1,
+ *         @OA\Items(type="integer", example=3)
+ *     )
+ * )
+ */
 class CreateStaffRequest extends BaseFormRequest
 {
     /**

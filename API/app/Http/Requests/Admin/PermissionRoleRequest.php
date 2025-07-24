@@ -6,6 +6,15 @@ namespace App\Http\Requests\Admin;
 
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="PermissionRoleRequest",
+ *     type="object",
+ *     required={"role_id", "permission_id"},
+ *     @OA\Property(property="role_id", type="integer", example=3),
+ *     @OA\Property(property="permission_id", type="integer", example=12)
+ * )
+ */
 class PermissionRoleRequest extends BaseFormRequest
 {
     /**

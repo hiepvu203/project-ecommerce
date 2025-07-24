@@ -7,6 +7,24 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @OA\Schema(
+ *     schema="DiscountCodeResource",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=15),
+ *     @OA\Property(property="shop_id", type="integer", example=7),
+ *     @OA\Property(property="code", type="string", example="SUMMER2025"),
+ *     @OA\Property(property="type", type="string", enum={"amount","percent","freeship"}, example="percent"),
+ *     @OA\Property(property="value", type="number", example=10),
+ *     @OA\Property(property="min_order_amount", type="number", nullable=true, example=100000),
+ *     @OA\Property(property="usage_limit", type="integer", nullable=true, example=100),
+ *     @OA\Property(property="usage_per_user", type="integer", nullable=true, example=1),
+ *     @OA\Property(property="start_at", type="string", format="date", example="24-07-2025"),
+ *     @OA\Property(property="end_at", type="string", format="date", example="31-08-2025"),
+ *     @OA\Property(property="active", type="boolean", example=true),
+ *     @OA\Property(property="created_at", type="string", format="date", example="24-07-2025")
+ * )
+ */
 class DiscountCodeResource extends JsonResource
 {
     /**

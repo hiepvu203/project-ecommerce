@@ -4,7 +4,6 @@ use App\Exceptions\BusinessException;
 use App\Exceptions\ForbiddenException;
 use App\Helpers\ApiResponse;
 use App\Http\Middleware\CheckUserType;
-use App\Http\Middleware\SendVerificationEmail;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -36,18 +35,18 @@ return Application::configure(basePath: dirname(__DIR__))
                 }
             }
 
-            // if ($e instanceof NotFoundHttpException) {
-            //     if ($request) {
-            //         return ApiResponse::fail(null, 'Không tìm thấy đường dẫn!.', 404);
-            //     }
-            // }
+            if ($e instanceof NotFoundHttpException) {
+                if ($request) {
+                    return ApiResponse::fail(null, 'Không tìm thấy đường dẫn!.', 404);
+                }
+            }
 
             if ($e instanceof ForbiddenException) {
                 if ($request) {
                     return ApiResponse::fail(null, 'Bạn không có quyền thực hiện hành động này!.', 403);
                 }
             }
-            // Bạn chỉ có thể cập nhật ngày kết thúc hoặc tăng giới hạn sử dụng sau khi mã đã bắt đầu.
+            // Chỉ có thể cập nhật ngày kết thúc hoặc tăng giới hạn sử dụng sau khi mã đã bắt đầu.
 
             if ($e instanceof AuthenticationException) {
                 if ($request) {

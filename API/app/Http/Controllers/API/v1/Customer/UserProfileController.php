@@ -20,6 +20,35 @@ class UserProfileController extends Controller
     public function __construct(
         protected UserProfileService $userProfileService
     ) {}
+
+    /**
+     * @OA\Get(
+     *     path="/api/v1/customer/profile",
+     *     summary="Lấy thông tin hồ sơ người dùng",
+     *     tags={"Customer / Profile"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lấy thông tin hồ sơ thành công",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Get profile successful!"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="profile",
+     *                     ref="#/components/schemas/profile"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Không xác thực"
+     *     )
+     * )
+     */
     public function getProfile(Request $request)
     {
         $user = Auth::user();
@@ -29,6 +58,42 @@ class UserProfileController extends Controller
         return ApiResponse::success(['profile' => new UserProfileResource($profile->load('user'))], 'Get profile successful!', 200);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/v1/customer/profile",
+     *     summary="Cập nhật thông tin hồ sơ người dùng",
+     *     tags={"Customer Profile"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateUserProfileRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Cập nhật hồ sơ thành công",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Updated profile successful!"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="profile",
+     *                     ref="#/components/schemas/profile"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Dữ liệu không hợp lệ"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Không xác thực"
+     *     )
+     * )
+     */
     public function update(UpdateUserProfileRequest $request)
     {
         try {
@@ -49,6 +114,49 @@ class UserProfileController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/v1/customer/profile/avatar",
+     *     summary="Upload avatar cho người dùng",
+     *     tags={"Customer Profile"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="string",
+     *                     format="binary",
+     *                     description="Ảnh đại diện (jpg, jpeg, png, webp, max 2MB)"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Upload avatar thành công",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Avatar uploaded successfully!"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="avatar_url", type="string", example="https://.../avatar.jpg")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Upload thất bại"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Không xác thực"
+     *     )
+     * )
+     */
     public function uploadAvatar(Request $request, UserAvatarUploadService $uploadService)
     {
         try{
@@ -65,6 +173,34 @@ class UserProfileController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/v1/customer/profile/change-password",
+     *     summary="Đổi mật khẩu người dùng",
+     *     tags={"Customer Profile"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"old_password","new_password"},
+     *             @OA\Property(property="old_password", type="string", example="oldpassword123"),
+     *             @OA\Property(property="new_password", type="string", example="newpassword456")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Đổi mật khẩu thành công",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Password changed successfully!")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Mật khẩu cũ không đúng hoặc không xác thực"
+     *     )
+     * )
+     */
     public function changePassword(ChangePasswordRequest $request)
     {
         $user = Auth::user();

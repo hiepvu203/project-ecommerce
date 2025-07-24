@@ -6,6 +6,15 @@ namespace App\Http\Requests\Admin;
 
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="UserRoleUpdateRequest",
+ *     type="object",
+ *     @OA\Property(property="user_id", type="integer", example=42),
+ *     @OA\Property(property="role_id", type="integer", example=3),
+ *     @OA\Property(property="shop_id", type="integer", nullable=true, example=7)
+ * )
+ */
 class UserRoleUpdateRequest extends BaseFormRequest
 {
     /**

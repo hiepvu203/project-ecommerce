@@ -8,7 +8,6 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 class ApiResponse
 {
@@ -26,7 +25,7 @@ class ApiResponse
             $items = $resourceClass ? $resourceClass::collection($eloquentCollection) : $eloquentCollection;
 
             $response['data'] = $items instanceof AnonymousResourceCollection ? $items->resolve() : $items->toArray();
-            
+
             $response['meta'] = array_merge($meta, [
                 'total' => $data->total(),
                 'per_page' => $data->perPage(),

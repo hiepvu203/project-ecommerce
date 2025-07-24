@@ -6,6 +6,36 @@ namespace App\Http\Requests\Shop;
 
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="CreateProductRequest",
+ *     type="object",
+ *     required={"name","slug","description","price","quantity","image"},
+ *     @OA\Property(property="category_id", type="integer", nullable=true, example=5),
+ *     @OA\Property(property="name", type="string", maxLength=255, example="Smart Watch X1"),
+ *     @OA\Property(property="slug", type="string", maxLength=255, example="smart-watch-x1"),
+ *     @OA\Property(property="description", type="string", example="Latest smart watch with health tracking"),
+ *     @OA\Property(property="price", type="number", format="float", minimum=0, example=1299000),
+ *     @OA\Property(property="compare_price", type="number", format="float", minimum=0, nullable=true, example=1499000),
+ *     @OA\Property(property="quantity", type="integer", minimum=0, example=50),
+ *     @OA\Property(property="sku", type="string", maxLength=100, nullable=true, example="SW-X1-BLK"),
+ *     @OA\Property(property="is_featured", type="boolean", example=false),
+ *     @OA\Property(property="image", type="array", minItems=1, @OA\Items(type="string", format="binary")),
+ *     @OA\Property(
+ *         property="variants",
+ *         type="array",
+ *         @OA\Items(
+ *             type="object",
+ *             required={"name","value","quantity"},
+ *             @OA\Property(property="name", type="string", maxLength=100, example="Color"),
+ *             @OA\Property(property="value", type="string", maxLength=100, example="Black"),
+ *             @OA\Property(property="price_adjustment", type="number", format="float", minimum=0, example=0),
+ *             @OA\Property(property="quantity", type="integer", minimum=0, example=25),
+ *             @OA\Property(property="sku", type="string", maxLength=100, nullable=true, example="SW-X1-BLK-42")
+ *         )
+ *     )
+ * )
+ */
 class CreateProductRequest extends BaseFormRequest
 {
     /**

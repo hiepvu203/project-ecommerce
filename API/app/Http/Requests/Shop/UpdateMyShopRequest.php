@@ -6,6 +6,22 @@ namespace App\Http\Requests\Shop;
 
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="UpdateMyShopRequest",
+ *     type="object",
+ *     @OA\Property(property="name", type="string", maxLength=255, example="Updated Name"),
+ *     @OA\Property(property="description", type="string", nullable=true, example="Updated description"),
+ *     @OA\Property(property="phone", type="string", maxLength=10, example="0987654321"),
+ *     @OA\Property(property="address", type="string", example="456 Nguyễn Trãi, Q5, TP.HCM"),
+ *     @OA\Property(property="city", type="string", maxLength=100, example="Hồ Chí Minh"),
+ *     @OA\Property(property="country", type="string", maxLength=100, example="Việt Nam"),
+ *     @OA\Property(property="payment_methods", type="array", @OA\Items(type="string")),
+ *     @OA\Property(property="shipping_config", type="object"),
+ *     @OA\Property(property="logo_url", type="string", format="binary", description="New logo image"),
+ *     @OA\Property(property="cover_image_url", type="string", format="binary", description="New cover image")
+ * )
+ */
 class UpdateMyShopRequest extends BaseFormRequest
 {
     /**

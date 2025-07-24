@@ -24,6 +24,8 @@ class BaseOrderRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
+            'cart_item_ids'     => ['required', 'array', 'min:1'],
+            'cart_item_ids.*'   => ['integer', 'exists:cart_items,id'],
             'shipping_method'   => ['required', 'string', 'max:50'],
             'shipping_address'  => ['required', 'array'],
             'shipping_address.name'     => ['required', 'string', 'max:255'],
@@ -43,7 +45,12 @@ class BaseOrderRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
-            // Phương thức vận chuyển
+            'cart_item_ids.required'    => 'Bạn chưa chọn sản phẩm nào.',
+            'cart_item_ids.array'       => 'Danh sách sản phẩm không hợp lệ.',
+            'cart_item_ids.min'         => 'Phải chọn ít nhất một sản phẩm.',
+            'cart_item_ids.*.integer'   => 'ID sản phẩm phải là số.',
+            'cart_item_ids.*.exists'    => 'Một số sản phẩm không tồn tại.',
+            // phương thức vận chuyển
             'shipping_method.required' => 'Phương thức vận chuyển là bắt buộc.',
             'shipping_method.string' => 'Phương thức vận chuyển phải là chuỗi ký tự.',
             'shipping_method.max' => 'Phương thức vận chuyển không được vượt quá 50 ký tự.',

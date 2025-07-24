@@ -7,8 +7,10 @@ namespace App\Services;
 use App\Repositories\OrderRepository;
 use App\Models\User;
 use App\Enums\StatusEnum;
+use App\Exceptions\BusinessException;
 use App\Models\DiscountCode;
 use App\Models\Order;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -56,8 +58,12 @@ class OrderService
 
         // check the number of uses for the user
         $userUsed = Order::where('user_id', $user->id)
-        ->where('discount_code', $discountCode)
-        ->exists();
+            ->where('discount_code', $discountCode)
+            ->exists();
+
+        if ($userUsed)
+            throw new BusinessException('Bạn đã sử dụng mã này ', 400);
+
         if ($userUsed) {
             return [
                 'discount' => 0,
@@ -93,14 +99,34 @@ class OrderService
             'discount_id' => $discount->id,
         ];
     }
-    public function previewCheckout(User $user, array $requestData): array
+
+    private function getSelectedCartItems(User $user, array $itemIds): Collection
     {
         $cart = $user->cart;
-        if (!$cart || $cart->items->isEmpty()) {
+        if (!$cart || $cart->items()->count() === 0) {
             throw new \Exception('Cart is empty!', 400);
         }
 
-        $cartItems = $cart->items()->with(['product', 'variant'])->get();
+        $items = $cart->items()
+                    ->with(['product', 'variant'])
+                    ->whereIn('id', $itemIds)
+                    ->get();
+
+        if ($items->isEmpty()) {
+            throw new \Exception('No valid cart items selected!', 400);
+        }
+
+        // (tuỳ chọn) Kiểm tra nếu user gửi id không thuộc cart của mình
+        $invalid = collect($itemIds)->diff($items->pluck('id'));
+        if ($invalid->isNotEmpty()) {
+            throw new \Exception('Some cart items do not belong to your cart.', 400);
+        }
+
+        return $items;
+    }
+    public function previewCheckout(User $user, array $requestData): array
+    {
+        $cartItems = $this->getSelectedCartItems($user, $requestData['cart_item_ids']);
         $grouped = $cartItems->groupBy(fn($item) => $item->product->shop_id);
 
         $orderSubtotal = 0;
@@ -152,113 +178,105 @@ class OrderService
 
     public function checkout(User $user, array $requestData): Order
     {
-        $cart = $user->cart;
-        if (!$cart || $cart->items->isEmpty()) {
-            throw new \Exception('Cart is empty!', 400);
-        }
-
         if ($user->type === User::TYPE_SHOP_OWNER && $user->shop) {
-            foreach ($cart->items as $item) {
+            foreach ($this->getSelectedCartItems($user, $requestData['cart_item_ids']) as $item) {
                 if ($item->product && $item->product->shop_id === $user->shop->id) {
                     throw new \Exception('Shop owner cannot order products from their own shop.', 403);
                 }
             }
         }
 
-        return DB::transaction(function () use ($user, $cart, $requestData) {
-            $cartItems = $cart->items()->with(['product', 'variant'])->get();
-            $grouped = $cartItems->groupBy(fn($item) => $item->product->shop_id);
+        return DB::transaction(function () use ($user, $requestData) {
+            $cartItems = $this->getSelectedCartItems($user, $requestData['cart_item_ids']);
+            $grouped   = $cartItems->groupBy(fn ($item) => $item->product->shop_id);
 
-            $orderSubtotal = 0;
+            $orderSubtotal    = 0;
             $orderShippingFee = 0;
-            $orderItemsData = [];
-            $subOrdersData = [];
+            $orderItemsData   = [];
+            $subOrdersData    = [];
 
             foreach ($grouped as $shopId => $items) {
-                $shop = $items->first()->product->shop;
-                $subTotal = 0;
+                $shop        = $items->first()->product->shop;
                 $shippingFee = $shop->shipping_config['fee'] ?? 0;
-                $commission = 0;
+                $subTotal    = 0;
 
                 foreach ($items as $item) {
                     $itemTotal = $item->price_at_added * $item->quantity;
-
                     $orderItemsData[] = [
-                        'order_id' => 0,
-                        'sub_order_id' => 0,
-                        'product_id' => $item->product_id,
-                        'shop_id' => $shopId,
-                        'variant_id' => $item->variant_id,
-                        'product_name' => $item->product->name,
-                        'variant_name' => $item->variant->value ?? null,
-                        'price' => $item->price_at_added,
-                        'quantity' => $item->quantity,
-                        'total_price' => $itemTotal,
-                        'created_at' => now(),
+                        'order_id'      => 0,
+                        'sub_order_id'  => 0,
+                        'product_id'    => $item->product_id,
+                        'shop_id'       => $shopId,
+                        'variant_id'    => $item->variant_id,
+                        'product_name'  => $item->product->name,
+                        'variant_name'  => $item->variant->value ?? null,
+                        'price'         => $item->price_at_added,
+                        'quantity'      => $item->quantity,
+                        'total_price'   => $itemTotal,
+                        'created_at'    => now(),
                     ];
-
                     $subTotal += $itemTotal;
                 }
 
                 $subOrdersData[] = [
-                    'shop_id' => $shopId,
-                    'subtotal' => $subTotal,
+                    'shop_id'      => $shopId,
+                    'subtotal'     => $subTotal,
                     'shipping_fee' => $shippingFee,
-                    'commission' => $commission,
-                    'total' => $subTotal + $shippingFee,
-                    'status' => StatusEnum::PENDING->value,
+                    'commission'   => 0,
+                    'total'        => $subTotal + $shippingFee,
+                    'status'       => StatusEnum::PENDING->value,
                 ];
 
-                $orderSubtotal += $subTotal;
+                $orderSubtotal    += $subTotal;
                 $orderShippingFee += $shippingFee;
             }
 
-            // Áp dụng mã
-            $discountCode = $this->calculateDiscount($requestData['discount_code'] ?? null, $orderSubtotal, $user);
+            // Áp dụng mã giảm giá
+            $discount = $this->calculateDiscount($requestData['discount_code'] ?? null, $orderSubtotal, $user);
 
-            // Nếu có discount, trừ usage_limit
-            if ($discountCode['discount'] > 0 && $discountCode['discount_id']) {
-                $discount = DiscountCode::find($discountCode['discount_id']);
-                if ($discount && $discount->usage_limit > 0) {
-                    $discount->decrement('usage_limit');
-                }
+            if ($discount['discount'] > 0 && $discount['discount_id']) {
+                DiscountCode::where('id', $discount['discount_id'])
+                            ->where('usage_limit', '>', 0)
+                            ->decrement('usage_limit');
             }
 
+            // Tạo Order & Sub-Orders
             $order = $this->orderRepository->createOrder([
-                'order_number' => strtoupper(Str::random(10)),
-                'user_id' => $user->id,
-                'subtotal' => $orderSubtotal,
-                'shipping_fee' => $orderShippingFee,
-                'discount' => $discountCode['discount'],
-                'discount_code' => $discountCode['discount_code'],
-                'total' => $orderSubtotal + $orderShippingFee - $discountCode['discount'],
+                'order_number'   => strtoupper(Str::random(10)),
+                'user_id'        => $user->id,
+                'subtotal'       => $orderSubtotal,
+                'shipping_fee'   => $orderShippingFee,
+                'discount'       => $discount['discount'],
+                'discount_code'  => $discount['discount_code'],
+                'total'          => $orderSubtotal + $orderShippingFee - $discount['discount'],
                 'payment_method' => $requestData['payment_method'],
                 'payment_status' => StatusEnum::PENDING->value,
-                'shipping_method' => $requestData['shipping_method'],
-                'shipping_address' => $requestData['shipping_address'],
+                'shipping_method'=> $requestData['shipping_method'],
+                'shipping_address'=> $requestData['shipping_address'],
                 'billing_address' => $requestData['billing_address'],
-                'status' => StatusEnum::PENDING->value,
-                'notes' => $requestData['notes'] ?? null,
+                'status'         => StatusEnum::PENDING->value,
+                'notes'          => $requestData['notes'] ?? null,
             ]);
 
-            // Tạo subOrders và cập nhật orderItemsData
             foreach ($subOrdersData as $subOrderData) {
                 $subOrder = $this->orderRepository->createSubOrder([
                     ...$subOrderData,
                     'order_id' => $order->id,
                 ]);
+
                 foreach ($orderItemsData as &$item) {
                     if ($item['shop_id'] === $subOrder->shop_id) {
-                        $item['order_id'] = $order->id;
+                        $item['order_id']     = $order->id;
                         $item['sub_order_id'] = $subOrder->id;
                     }
                 }
+                unset($item);
             }
-            unset($item);
 
             $this->orderRepository->insertOrderItems($orderItemsData);
 
-            $cart->items()->delete();
+            // Xoá các cart item đã mua
+            $cartItems->each->delete();
 
             return $order->load('subOrders', 'subOrders.shop');
         });
@@ -269,7 +287,7 @@ class OrderService
         return $this->orderRepository->findUserOrder($userId, $orderId);
     }
 
-    public function cancelOrder(User $user, int $orderId, ?string $reason = null)
+    public function cancelOrder(User $user, int $orderId, ?string $reason = null):bool
     {
         $order = $this->orderRepository->findUserOrderById($user->id, $orderId);
 
@@ -277,11 +295,12 @@ class OrderService
             throw new \Exception('Order not found', 404);
         }
 
-        if ($order->status !== 'pending') {
+        if ($order->status !== StatusEnum::PENDING->value) {
             throw new \Exception('Only pending orders can be cancelled', 422);
         }
 
         return DB::transaction(function () use ($order, $reason) {
+            // Cập nhật trạng thái đơn hàng và các sub-orders
             $order->status = 'cancelled';
             $order->save();
 
@@ -289,6 +308,18 @@ class OrderService
                 $sub->status = 'cancelled';
                 $sub->cancellation_reason = $reason ?? 'Customer cancelled';
                 $sub->save();
+            }
+
+            // 2. Hoàn lại stock
+            foreach ($order->items as $item) {
+                optional($item->product)->increment('stock', $item->quantity);
+            }
+
+            // 3. Hoàn lại usage nếu có mã giảm giá
+            if ($order->discount_id) {
+                DiscountCode::where('id', $order->discount_id)
+                    ->where('usage_limit', '>', 0)
+                    ->increment('usage_limit');
             }
 
             return true;

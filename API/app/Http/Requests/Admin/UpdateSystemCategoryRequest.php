@@ -6,6 +6,24 @@ namespace App\Http\Requests\Admin;
 
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="UpdateSystemCategoryRequest",
+ *     type="object",
+ *     description="Payload for updating an existing system category. All fields are optional.",
+ *     @OA\Property(property="name", type="string", maxLength=255, example="Smartphones"),
+ *     @OA\Property(property="slug", type="string", maxLength=255, example="smartphones"),
+ *     @OA\Property(
+ *         property="image_url",
+ *         type="string",
+ *         format="binary",
+ *         description="New image file (jpg,jpeg,png,webp ≤ 2MB). Leave blank to keep the current image."
+ *     ),
+ *     @OA\Property(property="parent_id", type="integer", nullable=true, example=1),
+ *     @OA\Property(property="order_position", type="integer", minimum=0, example=3),
+ *     @OA\Property(property="is_featured", type="boolean", example=false)
+ * )
+ */
 class UpdateSystemCategoryRequest extends BaseFormRequest
 {
     /**

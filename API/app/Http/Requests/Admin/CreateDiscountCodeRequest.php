@@ -6,6 +6,22 @@ namespace App\Http\Requests\Admin;
 
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="CreateDiscountCodeRequest",
+ *     type="object",
+ *     required={"code","type","value","start_at","end_at"},
+ *     @OA\Property(property="code", type="string", maxLength=50, example="SUMMER2025"),
+ *     @OA\Property(property="type", type="string", enum={"amount","percent","freeship"}, example="percent"),
+ *     @OA\Property(property="value", type="number", minimum=0, example=10),
+ *     @OA\Property(property="min_order_amount", type="number", minimum=0, nullable=true, example=100000),
+ *     @OA\Property(property="usage_limit", type="integer", minimum=1, nullable=true, example=100),
+ *     @OA\Property(property="usage_per_user", type="integer", minimum=1, nullable=true, example=1),
+ *     @OA\Property(property="start_at", type="string", format="date", example="2025-07-24"),
+ *     @OA\Property(property="end_at", type="string", format="date", example="2025-08-31"),
+ *     @OA\Property(property="active", type="boolean", example=true)
+ * )
+ */
 class CreateDiscountCodeRequest extends BaseFormRequest
 {
     public function authorize(): bool

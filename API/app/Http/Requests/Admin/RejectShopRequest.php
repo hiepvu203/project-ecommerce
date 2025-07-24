@@ -6,6 +6,14 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="RejectShopRequest",
+ *     type="object",
+ *     required={"rejection_reason"},
+ *     @OA\Property(property="rejection_reason", type="string", maxLength=255, example="Document unclear")
+ * )
+ */
 class RejectShopRequest extends FormRequest
 {
     /**

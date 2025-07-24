@@ -7,6 +7,16 @@ namespace App\Http\Requests\Admin;
 use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * @OA\Schema(
+ *     schema="RoleRequest",
+ *     type="object",
+ *     required={"name", "scope"},
+ *     @OA\Property(property="name", type="string", maxLength=50, example="warehouse_manager"),
+ *     @OA\Property(property="display_name", type="string", maxLength=100, nullable=true, example="Warehouse Manager"),
+ *     @OA\Property(property="scope", type="string", enum={"global", "shop"}, example="shop")
+ * )
+ */
 class RoleRequest extends BaseFormRequest
 {
     /**

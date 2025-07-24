@@ -7,6 +7,16 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @OA\Schema(
+ *     schema="PermissionRoleResource",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=7),
+ *     @OA\Property(property="role_id", type="integer", example=3),
+ *     @OA\Property(property="permission_id", type="integer", example=12),
+ *     @OA\Property(property="created_at", type="string", format="date", example="24-07-2025")
+ * )
+ */
 class PermissionRoleResource extends JsonResource
 {
     /**

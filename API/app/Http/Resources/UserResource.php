@@ -7,6 +7,17 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @OA\Schema(
+ *     schema="UserResource",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=42),
+ *     @OA\Property(property="name", type="string", example="Nguyễn Văn A"),
+ *     @OA\Property(property="email", type="string", format="email", example="staff@example.com"),
+ *     @OA\Property(property="type", type="string", example="admin"),
+ *     @OA\Property(property="email_verified_at", type="string", format="date", nullable=true, example="24-07-2025")
+ * )
+ */
 class UserResource extends JsonResource
 {
     /**

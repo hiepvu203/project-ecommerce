@@ -6,6 +6,17 @@ namespace App\Http\Requests\Customer;
 
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="PlaceOrderRequest",
+ *     type="object",
+ *     required={"shipping_address_id","billing_address_id","shipping_method","payment_method"},
+ *     allOf={
+ *        @OA\Schema(ref="#/components/schemas/CheckoutRequest")
+ *     },
+ *     @OA\Property(property="payment_method", type="string", example="cod")
+ * )
+ */
 class PlaceOrderRequest extends BaseOrderRequest
 {
     /**

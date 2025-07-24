@@ -10,10 +10,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * App\Models\User
+ * App\Models\Shop
  *
  * @property int $id
  * @property string $status
+ * @property string $name
  * ...
  */
 class Shop extends Model

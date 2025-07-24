@@ -13,7 +13,7 @@ class BaseFormRequest extends FormRequest
 {
     protected function failedValidation(Validator $validator)
     {
-        $response = ApiResponse::fail($validator->errors()->toArray(),'Dữ liệu không hợp lệ',401);
+        $response = ApiResponse::fail($validator->errors()->toArray(),'Dữ liệu không hợp lệ',422);
         throw new HttpResponseException($response);
     }
 }

@@ -11,6 +11,20 @@ use App\Http\Requests\BaseFormRequest;
  * @property string $status
  * @property string|null $rejection_reason
  */
+
+/**
+ * @OA\Schema(
+ *     schema="VerifyRequest",
+ *     type="object",
+ *     required={"rejection_reason"},
+ *     @OA\Property(
+ *         property="rejection_reason",
+ *         type="string",
+ *         maxLength=255,
+ *         description="Lý do từ chối phê duyệt sản phẩm"
+ *     )
+ * )
+ */
 class VerifyRequest extends BaseFormRequest
 {
     /**
@@ -29,18 +43,16 @@ class VerifyRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'status' => 'required|string|in:approved,rejected',
-            'rejection_reason' => 'required_if:status,rejected|string|nullable',
+            'rejection_reason' => 'required|string|max:255',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'status.required' => 'Trạng thái là bắt buộc.',
-            'status.in' => 'Trạng thái phải là "approved" hoặc "rejected".',
-            'rejection_reason.required_if' => 'Lý do từ chối là bắt buộc khi trạng thái là "rejected".',
+            'rejection_reason.required' => 'Lý do từ chối là bắt buộc.',
             'rejection_reason.string' => 'Lý do từ chối phải là chuỗi ký tự.',
+            'rejection_reason.max' => 'Lý do từ chối không được vượt quá 255 ký tự.',
         ];
     }
 }

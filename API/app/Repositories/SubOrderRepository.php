@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Enums\StatusEnum;
 use App\Models\SubOrder;
 
 class SubOrderRepository
@@ -26,7 +27,7 @@ class SubOrderRepository
 
     public function approveSubOrder(SubOrder $subOrder): SubOrder
     {
-        $subOrder->status = 'approved';
+        $subOrder->status = StatusEnum::APPROVED->value;
         $subOrder->save();
         return $subOrder->refresh();
     }

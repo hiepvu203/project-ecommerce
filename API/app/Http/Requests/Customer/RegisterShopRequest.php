@@ -6,6 +6,25 @@ namespace App\Http\Requests\Customer;
 
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="RegisterShopRequest",
+ *     type="object",
+ *     required={"name","slug","phone","address","city","country"},
+ *     @OA\Property(property="name", type="string", maxLength=255, example="Cool Gadgets"),
+ *     @OA\Property(property="slug", type="string", maxLength=255, example="cool-gadgets"),
+ *     @OA\Property(property="description", type="string", nullable=true, example="Best gadgets in town"),
+ *     @OA\Property(property="phone", type="string", maxLength=10, example="0909123123"),
+ *     @OA\Property(property="address", type="string", example="123 Lê Lợi, Q1, TP.HCM"),
+ *     @OA\Property(property="city", type="string", maxLength=100, example="Hồ Chí Minh"),
+ *     @OA\Property(property="country", type="string", maxLength=100, example="Việt Nam"),
+ *     @OA\Property(property="payment_methods", type="array", @OA\Items(type="string"), example={"cod","bank_transfer"}),
+ *     @OA\Property(property="shipping_config", type="object", example={"standard":15000,"express":30000}),
+ *     @OA\Property(property="commission_rate", type="number", minimum=0, maximum=100, example=5),
+ *     @OA\Property(property="logo_url", type="string", format="binary", description="Shop logo image"),
+ *     @OA\Property(property="cover_image_url", type="string", format="binary", description="Shop cover image")
+ * )
+ */
 class RegisterShopRequest extends BaseFormRequest
 {
     /**

@@ -6,6 +6,16 @@ namespace App\Http\Requests\Customer;
 
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="AddToCartRequest",
+ *     type="object",
+ *     required={"product_id", "variant_id", "quantity"},
+ *     @OA\Property(property="product_id", type="integer", example=101, description="ID sản phẩm"),
+ *     @OA\Property(property="variant_id", type="integer", example=5, description="ID biến thể sản phẩm"),
+ *     @OA\Property(property="quantity", type="integer", example=2, description="Số lượng")
+ * )
+ */
 class AddToCartRequest extends BaseFormRequest
 {
     /**

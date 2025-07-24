@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use App\Helpers\ApiResponse;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\v1\AuthController;
+use App\Http\Controllers\Api\v1\Customer\AuthController;
 use App\Http\Controllers\API\v1\Admin\SaleController;
 use App\Http\Controllers\Api\v1\Admin\StaffController;
 use App\Http\Controllers\Api\v1\Admin\DiscountCodeController;
@@ -43,7 +43,7 @@ Route::prefix('v1/auth')->group(function () {
     Route::post('tokens/refresh', [AuthController::class, 'refresh'])->name('auth.tokens.refresh');
 });
 
-Route::get('v1/email-verifications/{id}/{hash}', function (Request $request, $id, $hash) {
+Route::get('v1/email-verifications/{id}/{hash}', function ($id, $hash) {
     $user = User::findOrFail($id);
 
     if (!hash_equals((string) $hash, sha1($user->getEmailForVerification())))
@@ -125,7 +125,8 @@ Route::prefix('v1/admin')->middleware(['auth:api', 'user_type:admin'])->group(fu
     Route::get('shops/verifications', [ShopVerificationAdminController::class, 'index']);
     Route::post('shops/{shopId}/approvals', [ShopVerificationAdminController::class, 'approve']);
     Route::post('shops/{shopId}/rejections', [ShopVerificationAdminController::class, 'reject']);
-    Route::post('products/{product}/approvals', [VerifyProductController::class, 'verify']);
+    Route::post('products/{product}/approvals', [VerifyProductController::class, 'approve']);
+    Route::post('products/{product}/rejections', [VerifyProductController::class, 'reject']);
     Route::post('shops/{shop}/unlocks', [ShopAdminController::class, 'unlock']);
     Route::post('system-categories', [SystemCategoryController::class, 'store']);
     Route::get('system-categories', [SystemCategoryController::class, 'index']);

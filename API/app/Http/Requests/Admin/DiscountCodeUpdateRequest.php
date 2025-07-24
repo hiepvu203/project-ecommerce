@@ -5,6 +5,21 @@ declare(strict_types= 1);
 namespace App\Http\Requests\Admin;
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="DiscountCodeUpdateRequest",
+ *     type="object",
+ *     @OA\Property(property="code", type="string", maxLength=50, example="SUMMER2025"),
+ *     @OA\Property(property="type", type="string", enum={"amount","percent","freeship"}, example="percent"),
+ *     @OA\Property(property="value", type="number", minimum=0, example=15),
+ *     @OA\Property(property="min_order_amount", type="number", minimum=0, nullable=true, example=150000),
+ *     @OA\Property(property="usage_limit", type="integer", minimum=1, nullable=true, example=200),
+ *     @OA\Property(property="usage_per_user", type="integer", minimum=1, nullable=true, example=2),
+ *     @OA\Property(property="start_at", type="string", format="date", example="2025-08-01"),
+ *     @OA\Property(property="end_at", type="string", format="date", example="2025-09-30"),
+ *     @OA\Property(property="active", type="boolean", example=false)
+ * )
+ */
 class DiscountCodeUpdateRequest extends BaseFormRequest
 {
     /**

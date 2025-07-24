@@ -6,6 +6,19 @@ namespace App\Http\Requests\Admin;
 
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="SystemCategoryRequest",
+ *     type="object",
+ *     required={"name"},
+ *     @OA\Property(property="name", type="string", maxLength=255, example="Điện thoại"),
+ *     @OA\Property(property="slug", type="string", maxLength=255, nullable=true, example="dien-thoai"),
+ *     @OA\Property(property="image_url", type="string", format="binary", description="Image file (jpg,jpeg,png,webp ≤ 2MB)"),
+ *     @OA\Property(property="parent_id", type="integer", nullable=true, example=1),
+ *     @OA\Property(property="order_position", type="integer", minimum=0, example=2),
+ *     @OA\Property(property="is_featured", type="boolean", example=true)
+ * )
+ */
 class SystemCategoryRequest extends BaseFormRequest
 {
     /**
