@@ -1,0 +1,55 @@
+.home-banner-wrapper {
+  width: 1280px;
+  margin: 24px auto;
+  padding: 0 10px;
+  position: relative;
+
+  .banner-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .banner-slide {
+    display: flex;
+    gap: 12px;
+    transition: transform 0.4s ease;
+  }
+
+  .banner-image {
+    width: calc(50% - 6px);
+    height: auto;
+    border-radius: 6px;
+    object-fit: cover;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #fff;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0.9;
+
+    &.left {
+      left: 10px;
+    }
+
+    &.right {
+      right: 10px;
+    }
+
+    &:hover {
+      background-color: #ffd400;
+    }
+  }
+}

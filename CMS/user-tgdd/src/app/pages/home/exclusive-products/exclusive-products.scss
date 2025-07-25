@@ -1,0 +1,134 @@
+.exclusive-wrapper {
+  width: 1280px;
+  margin: 32px auto;
+
+  .title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .exclusive-content {
+    display: flex;
+    gap: 20px;
+
+    .exclusive-banner img {
+      width: 320px;
+      height: auto;
+      border-radius: 6px;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .product-slider-container {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+
+      .product-slider {
+        display: flex;
+        overflow-x: auto;
+        gap: 16px;
+
+        scroll-behavior: smooth;
+        padding: 10px 24px;
+        -ms-overflow-style: none;
+        &::-webkit-scrollbar {
+          display: none;
+        }
+      }
+
+      .product-card {
+        flex: 0 0 220px;
+        border: 1px solid #eee;
+        border-radius: 6px;
+        padding: 12px;
+        background: #fff;
+        transition: 0.2s;
+
+        &:hover {
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+          .product-image {
+            transform: scale(1.05);
+          }
+
+          .product-name {
+            color: #007aff;
+          }
+        }
+
+        .product-image {
+          width: 100%;
+          aspect-ratio: 1/1;
+          object-fit: contain;
+          transition: transform 0.3s ease;
+        }
+
+        .product-name {
+          font-size: 14px;
+          margin: 8px 0;
+          height: 38px;
+          overflow: hidden;
+        }
+
+        .price-section {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 6px;
+
+          .price {
+            font-weight: bold;
+            color: red;
+          }
+
+          .original-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 13px;
+          }
+
+          .discount {
+            color: #f90;
+            font-size: 13px;
+          }
+        }
+
+        .rating {
+          font-size: 13px;
+          color: #555;
+          margin-top: 6px;
+        }
+      }
+
+      .nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        font-size: 20px;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        z-index: 5;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+
+        &:hover {
+          background-color: #ffd400;
+        }
+
+        &.left {
+          left: 0;
+        }
+
+        &.right {
+          right: 0;
+        }
+      }
+    }
+  }
+}

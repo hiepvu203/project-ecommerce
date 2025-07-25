@@ -1,0 +1,31 @@
+.product-price-box {
+  padding: 20px;
+
+  .price-box {
+    font-size: 15px;
+
+    .promo-list {
+      font-size: 14px;
+
+      ul {
+        padding-left: 0;
+
+        li {
+          line-height: 1.5;
+          display: flex;
+          align-items: start;
+
+          i {
+            font-size: 16px;
+            margin-top: 3px;
+          }
+        }
+      }
+    }
+
+    button.btn {
+      font-size: 15px;
+      padding: 8px 12px;
+    }
+  }
+}

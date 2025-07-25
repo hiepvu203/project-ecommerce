@@ -1,0 +1,11 @@
+<div class="product-commitments bg-light rounded p-3">
+  <h6 class="fw-bold mb-3">Thế Giới Di Động cam kết</h6>
+  <div class="row g-3">
+    <div class="col-md-6" *ngFor="let item of commitments">
+      <div class="d-flex gap-3 align-items-start">
+        <i class="bi fs-4 text-primary" [ngClass]="item.icon"></i>
+        <div [innerHTML]="item.text"></div>
+      </div>
+    </div>
+  </div>
+</div>

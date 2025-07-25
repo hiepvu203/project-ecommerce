@@ -1,0 +1,67 @@
+.footer {
+  background-color: #f8f9fa;
+  font-size: 14px;
+  padding-top: 24px;
+  padding-bottom: 12px;
+
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  a {
+    color: #000;
+    text-decoration: none;
+
+    &:hover {
+      color: #0066cc;
+    }
+  }
+
+  a[href^="tel"],
+  a[href^="mailto"] {
+    color: #0066cc;
+    font-weight: 600;
+  }
+
+  .footer-top {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 24px;
+
+    img {
+      max-height: 24px;
+    }
+
+    .bi {
+      vertical-align: middle;
+    }
+  }
+
+  .footer-bottom {
+    font-size: 13px;
+    color: #555;
+    padding-top: 16px;
+  }
+
+  ul {
+    padding-left: 0;
+    list-style: none;
+  }
+
+  h6 {
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  .social-icons a {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+  }
+
+  .brand-logos img {
+    margin-right: 6px;
+    margin-bottom: 6px;
+  }
+}

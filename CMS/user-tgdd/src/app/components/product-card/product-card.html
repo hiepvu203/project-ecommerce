@@ -1,0 +1,33 @@
+<div class="product-card">
+  <div class="image-wrapper">
+    <img [src]="product.image" alt="{{ product.name }}" />
+    <div class="label" *ngIf="product.label">{{ product.label }}</div>
+    <div class="label highlight" *ngIf="product.specialLabel">
+      {{ product.specialLabel }}
+    </div>
+  </div>
+
+  <div class="name">{{ product.name }}</div>
+
+  <div class="variants">
+    <span *ngFor="let variant of product.variants">{{ variant }}</span>
+  </div>
+
+  <div class="price">
+    <span class="current">{{ product.price | number }}₫</span>
+    <span class="original" *ngIf="product.originalPrice">
+      {{ product.originalPrice | number }}₫
+    </span>
+    <span class="discount" *ngIf="product.originalPrice">
+      -{{ getDiscount(product.price, product.originalPrice) }}%
+    </span>
+  </div>
+
+  <div class="promo" *ngIf="product.promo">{{ product.promo }}</div>
+
+  <div class="rating">
+    <i class="bi bi-star-fill"></i> {{ product.rating }}<i class="bi bi-dot"></i
+    >Đã bán {{ product.sold | number }}
+    <span class="compare"><i class="bi bi-plus-circle"></i> So sánh</span>
+  </div>
+</div>

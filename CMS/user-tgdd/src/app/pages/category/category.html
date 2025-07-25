@@ -1,0 +1,437 @@
+<app-header></app-header>
+
+<div class="category-container">
+  <div class="breadcrumb-wrapper">
+    <span class="breadcrumb">
+      <a routerLink="">Trang chủ</a> >
+      <strong>{{ categoryName }}</strong>
+    </span>
+    <span class="product-count">({{ totalProducts }} sản phẩm)</span>
+  </div>
+  <div class="banner-container">
+    <div class="banner-slide">
+      <img
+        *ngFor="let img of slides[currentIndex]"
+        [src]="img"
+        class="banner-image"
+        alt="banner"
+      />
+    </div>
+    <button class="nav-button left" (click)="prevSlide()">&#10094;</button>
+    <button class="nav-button right" (click)="nextSlide()">&#10095;</button>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn">
+      <i class="bi bi-funnel"></i>
+      Lọc
+    </button>
+    <div class="filter-scroll">
+      <button
+        *ngFor="let brand of brandList"
+        class="filter-tag"
+        [class.active]="selectedBrand === brand"
+        (click)="selectBrand(brand)"
+      >
+        <span><i class="bi bi-graph-up-arrow"></i></span>
+        <span class="brand-name">{{ brand }}</span>
+      </button>
+    </div>
+  </div>
+  <div class="sort-bar">
+    <span class="label">Sắp xếp theo:</span>
+
+    <ng-container *ngFor="let sort of sortOptions; let i = index">
+      <span
+        class="sort-option"
+        [class.active]="selectedSort === sort"
+        (click)="selectSort(sort)"
+      >
+        {{ sort }}
+        <ng-container *ngIf="sort === 'Giá'"
+          ><i class="bi bi-chevron-down"></i
+        ></ng-container>
+      </span>
+      <span *ngIf="i < sortOptions.length - 1" class="dot">·</span>
+    </ng-container>
+  </div>
+
+  <div class="product-grid">
+    <app-product-card *ngFor="let product of allProducts" [product]="product">
+    </app-product-card>
+  </div>
+  <div class="load-more-wrapper" *ngIf="remaining > 0">
+    <button class="load-more-btn" (click)="loadMore()">
+      Xem thêm {{ remaining }} điện thoại
+      <span><i class="bi bi-chevron-down"></i></span>
+    </button>
+  </div>
+
+  <div class="feedback-box" *ngIf="!feedbackSubmitted">
+    <p>
+      Bạn có hài lòng với trải nghiệm tìm kiếm thông tin, sản phẩm trên website
+      không?
+    </p>
+    <div class="btn-group">
+      <button (click)="submitFeedback(true)">
+        <i class="bi bi-emoji-heart-eyes-fill"></i> Hài lòng
+      </button>
+      <button (click)="submitFeedback(false)">
+        <i class="bi bi-emoji-frown-fill"></i> Không hài lòng
+      </button>
+    </div>
+  </div>
+  <div class="feedback-thank" *ngIf="feedbackSubmitted">
+    <p>Cảm ơn phản hồi của Bạn</p>
+  </div>
+</div>
+<section class="detail-description" [class.expanded]="isExpanded">
+  <div class="desc-wrapper">
+    <section class="category-intro">
+      <div class="container">
+        <div class="intro-wrapper">
+          <p>
+            Trong kỷ nguyên công nghệ số, <a href="#">điện thoại</a> di động đã
+            trở thành một phần không thể thiếu trong cuộc sống của mỗi người.Từ
+            liên lạc, tra cứu thông minh đến chụp ảnh, quay phim, giải trí, điện
+            thoại ngày càng chứng minh vai trò quan trọng và hữu dụng của mình.
+            Với thiết kế nhỏ gọn của mình, điện thoại đã trở thành vật nhỏ gọn
+            mang theo bên mình không thể thiếu. Vậy làm thể nào để lựa chọn được
+            một chiếc điện thoại phù hợp giữa vô vàn sản phẩm trên thị trường?
+            Bài viết này sẽ cung cấp những thông tin hữu ích , giúp bạn trở
+            thành người mua hàng thông thái.
+          </p>
+        </div>
+      </div>
+    </section>
+    <section class="toc-section">
+      <div class="toc-header" (click)="toggleToc()">
+        <strong>Nội dung chính </strong>
+        <i
+          class="bi"
+          [ngClass]="{'bi-chevron-up':tocOpen, 'bi-chevron-down': !tocOpen}"
+        ></i>
+      </div>
+      <div class="toc-body" *ngIf="tocOpen">
+        <ol>
+          <li>
+            <a (click)="scrollToSection('section1')"
+              >Những chức năng chính biến điện thoại thành trợ thủ đắc lực</a
+            >
+          </li>
+          <li>
+            <a (click)="scrollToSection('section2')">Phân loại điện thoại</a>
+            <ul>
+              <li>
+                <a (click)="scrollToSection('section2-1')">Theo tính năng</a>
+              </li>
+              <li>
+                <a (click)="scrollToSection('section2-2')">Theo hệ điều hành</a>
+              </li>
+              <li>
+                <a (click)="scrollToSection('section2-3')"
+                  >Theo nhu cầu/Tính năng đặc biệt</a
+                >
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a (click)="scrollToSection('section3')"
+              >TOP thương hiệu được ưa chuộng hiện nay</a
+            >
+          </li>
+          <li>
+            <a (click)="scrollToSection('section4')"
+              >Kinh nghiệm chọn mua điện thoại</a
+            >
+          </li>
+          <li>
+            <a (click)="scrollToSection('section5')"
+              >Mua điện thoại giá tốt, chính hãng ở Thế Giới Di Động</a
+            >
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="detail-section1" id="section1">
+      <h2>1. Những chức năng chính biến điện thoại thành trợ thủ đắc lực</h2>
+      <ul class="function-list">
+        <li>
+          <strong>Giao tiếp và kết nối: </strong>Điện thoại cho phép bạn liên
+          lạc với mọi người thông qua gọi điện, nhắn tin, email, và thậm chí
+          video call.
+        </li>
+        <li>
+          <strong>Truy cập thông tin: </strong>Chỉ với vài thao tác chạm, bạn có
+          thể dễ dàng truy cập internet để tìm kiếm mọi thông tin, cập nhật tin
+          tức và xu hướng.
+        </li>
+        <li>
+          <strong>Giải trí đa năng: </strong>Điện thoại là một trung tâm giải
+          trí di động với khả năng nghe nhạc, xem phim, đọc sách, chơi game và
+          sử dụng vô vàn ứng dụng giải trí khác.
+        </li>
+        <li>
+          <strong>Quản lý cuộc sống: </strong>Các ứng dụng trên điện thoại giúp
+          bạn lên kế hoạch, tổ chức công việc, nhắc nhở sự kiện quan trọng và
+          quản lý cuộc sống hằng ngày một cách hiệu quả.
+        </li>
+        <li>
+          <strong>Bảo vệ người sử dụng: </strong>Công nghệ trên smartphone ngày
+          càng được ứng dụng để bảo vệ sự an toàn của người dùng, ví dụ như chức
+          năng SOS trên iphone khi phát hiện va chạm.
+        </li>
+      </ul>
+      <div class="section-image">
+        <img
+          src="assets/img/category/chucnangdt.png"
+          alt="Chức năng điện thoại"
+        />
+      </div>
+    </section>
+    <section class="detail-section2" id="section2">
+      <h2>2. Phân loại điện thoại</h2>
+      <h3 id="section2-1">Theo tính năng</h3>
+      <table class="phone-table">
+        <thead>
+          <tr>
+            <th>Loại điện thoại</th>
+            <th>Chi tiết</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="#">Điện thoại phổ thông</a></td>
+            <td>
+              Loại điện thoại cơ bản, tập trung vào chức năng nghe gọi, nhắn
+              tin. Ưu điểm: giá rẻ, pin trâu, dễ sử dụng.
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Điện thoại thông minh</strong></td>
+            <td>
+              Được trang bị hệ điều hành, kết nối internet, cài đặt ứng dụng,
+              chụp ảnh chất lượng cao. Ưu điểm: đa chức năng, khả năng tùy biến
+              cao, đáp ứng mọi nhu cầu.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 id="section2-2">Theo hệ điều hành</h3>
+      <table class="phone-table">
+        <thead>
+          <tr>
+            <th>Loại điện thoại</th>
+            <th>Chi tiết</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="#">Android</a></td>
+            <td>
+              Hệ điều hành phổ biến nhất thế giới, mã nguồn mở, nhiều tùy biến,
+              nhiều ứng dụng. Các hãng điện thoại sử dụng Android: Sasung,
+              Xiaomi, OPPO, Realme.
+            </td>
+          </tr>
+          <tr>
+            <td><strong>IOS</strong></td>
+            <td>
+              Hệ điều hành độc quyền của Apple, giao diện đơn giản, dễ sử dụng,
+              bảo mật cao, hệ sinh thái đồng bộ.
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Các hệ điều hành khác</strong></td>
+            <td>
+              Một số điện thoại sử dụng hệ điều hành khác như KaiOS (dành cho
+              điện thoại phổ thông)
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 id="section2-3">Theo nhu cầu/Tính năng đặc biệt</h3>
+      <table class="phone-table">
+        <thead>
+          <tr>
+            <th>Loại điện thoại</th>
+            <th>Chi tiết</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="#">Điện thoại gaming</a></td>
+            <td>
+              Cấu hình mạnh mẽ, tản nhiệt tốt, màn hình tần số quét cao, nhiều
+              tính năng hỗ trợ game thủ.
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#">Điện thoại chụp ảnh đẹp</a></td>
+            <td>
+              Camera độ phân giải cao, nhiều ống kính, công nghệ xử lý ảnh tiên
+              tiến.
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#">Điện thoại siêu bền</a></td>
+            <td>
+              Chống nước, chống bụi, chông va đập, phù hợp với người dùng thường
+              xuyên hoạt động ngoài trời.
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#">Điện thoại AI</a></td>
+            <td>
+              Trang bị các tính năng và khả năng được hỗ trợ bởi trí tuệ nhân
+              tạo AI.
+            </td>
+          </tr>
+          <tr>
+            <td>Điện thoại gập</td>
+            <td>
+              Thiết kế độc đáo, màn hình lớn có thể gập lại, mang đến trải
+              nghiệm mới lạ.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="detail-section3" id="section3">
+      <h2>TOP thương hiệu được ưa chuộng hiện nay</h2>
+      <table class="brand-table">
+        <thead>
+          <tr>
+            <th>Thương hiệu</th>
+            <th>Chi tiết</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="#">iPhone</a></td>
+            <td>
+              iPhone nổi tiếng với thiết kế sang trọng, hiệu năng mạnh mẽ, hệ
+              điều hành IOS bảo mật và hệ sinh thái đồng bộ.
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#">Samsung</a></td>
+            <td>
+              Đa dạng mẫu mã, từ tầm trung đến tầm cao, camera ấn tượng, màn
+              hình đẹp, nhiều tính năng độc đáo.
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#">Xiaomi</a></td>
+            <td>
+              Giá cả phải chăng, cấu hình tốt, thiết kế trẻ trung, nhiều tính
+              năng hữu ích.
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#">OPPO</a></td>
+            <td>
+              Chuyên về camera, thiết kế thời trang, sạc nhanh, nhiều tính năng
+              làm đẹp.
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#">Realme</a></td>
+            <td>
+              Tập trung vào hiệu năng, giá rẻ, thiết kế trẻ trung, phù hợp với
+              giới trẻ.
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#">Vivo</a></td>
+            <td>Camera selfie đẹp, thiết kế ấn tượng, tính năng độc đáo.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="brand-img">
+        <img src="assets/img/category/brandphone.png" alt="iPhone" />
+      </div>
+    </section>
+    <section class="detail-section4" id="section4">
+      <h2>4. Kinh nghiệm chọn mua điện thoại</h2>
+      <table class="tips-table">
+        <thead>
+          <tr>
+            <th>Tiêu chí</th>
+            <th>Chi tiết</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Nhu cầu sử dụng</strong></td>
+            <td>
+              Bạn cần điện thoại để làm gì? Nghe gọi, nhắn tin, lướt web, xem
+              phim, chơi game, chụp ảnh?
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Ngân sách</strong></td>
+            <td>Xác định số tiền bạn sẵn sàng chi cho chiếc điện thoại mới.</td>
+          </tr>
+          <tr>
+            <td><strong>Tìm hiểu kỹ thông tin</strong></td>
+            <td>
+              Đọc các bài đánh giá, so sánh các sản phẩm khác nhau, tham khảo ý
+              kiến của bạn bè người thân.
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Đến trực tiếp của hàng</strong></td>
+            <td>
+              Trải nghiệm thực tế sản phẩm, kiểm tra màn hình, camera, tốc độ xử
+              lý.
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Kiểm tra kỹ trước khi mua</strong></td>
+            <td>Kiểm tra tình trạng máy, các phụ kiện đi kèm.</td>
+          </tr>
+          <tr>
+            <td><strong>Chọn cửa hàng uy tín để mua</strong></td>
+            <td>Để đảm bảo chất lượng sản phẩm và chế độ bảo hành tốt.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="detail-section5" id="section5">
+      <h5>5. Mua điện thoại giá tốt, chính hãng ở Thế Giới Di Động</h5>
+      <p>
+        Ngoài các mẫu điện thoại phổ thông và smartphone quen thuộc, Thế Giới Di
+        Động còn liên tục cập nhật các dòng sản phẩm công nghệ mới như
+        <a href="#">Samsung Z Flip 7</a>, <a href="#">Samsung Z Fold 7</a> chính
+        hãng, phục vụ nhu cầu đa đạng từ người dùng cá nhân đến doanh nghiệp.
+      </p>
+      <p>
+        Khi chọn mua điện thoại, bạn nên chọn các cửa hàng uy tín, chất lượng
+        như Thế Giới Di Động. Đặc biệt tại Thế Giới Di Động luôn có sẵn các sản
+        phẩm điện thoại chính hãng 100% đi kèm chính sách bảo hành tốt cùng
+        nhiều ưu đãi hấp dẫn:
+      </p>
+      <ul>
+        <li>Bảo hành cam kết 12 tháng.</li>
+        <li>Bảo hành chính hãng tại các trung tâm.</li>
+        <li>Giao hàng tại nhà nhanh chóng.</li>
+      </ul>
+      <p>
+        Tại Thế Giới Di Động, bạn có thể mua hàng theo hai hình thức online trên
+        website hoặc offline tại các siêu thị, cửa hàng trên toàn quốc. Như vậy,
+        bạn sẽ không lo lắng về vấn đề bảo hành hay mua phải hàng kém chất
+        lượng.
+      </p>
+    </section>
+    <ng-content></ng-content>
+  </div>
+
+  <div class="read-more-btn text-center mt-3">
+    <button class="btn btn-outline-primary" (click)="toggleDescription()">
+      {{isExpanded ? 'Thu gọn ' : 'Xem thêm '}}
+    </button>
+  </div>
+</section>
+<app-footer></app-footer>

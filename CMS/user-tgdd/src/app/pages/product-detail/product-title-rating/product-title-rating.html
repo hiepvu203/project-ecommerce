@@ -1,0 +1,26 @@
+<div
+  class="product-title-rating d-flex flex-wrap justify-content-between align-items-center gap-2"
+>
+  <div class="d-flex flex-wrap align-items-center gap-2">
+    <h1 class="fw-bold fs-5 mb-0">{{ name }}</h1>
+    <span class="text-muted small">Đã bán {{ sold }}</span>
+    <div class="d-flex align-items-center gap-1 text-warning small">
+      <i class="bi bi-star-fill"></i> {{ rating }}
+    </div>
+    <a href="#specs" class="text-primary small d-flex align-items-center">
+      <i class="bi bi-graph-up-arrow me-1"></i> Thông số
+    </a>
+    <a href="#compare" class="text-primary small d-flex align-items-center">
+      <i class="bi bi-plus-circle me-1"></i> So sánh
+    </a>
+  </div>
+
+  <div class="d-flex align-items-center gap-2">
+    <button class="btn btn-primary btn-sm d-flex align-items-center gap-1">
+      <i class="bi bi-hand-thumbs-up-fill"></i> Thích {{ likes | number }}
+    </button>
+    <button class="btn btn-primary btn-sm d-flex align-items-center gap-1">
+      <i class="bi bi-share-fill"></i> Chia sẻ
+    </button>
+  </div>
+</div>

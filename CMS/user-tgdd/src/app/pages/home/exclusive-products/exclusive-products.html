@@ -1,0 +1,77 @@
+<!-- <div class="exclusive-wrapper">
+  <h2 class="title">Sản Phẩm Đặc Quyền</h2>
+  <div class="exclusive-content">
+    <div class="exclusive-banner">
+      <img src="assets/img/home/bannerdq.png" alt="Banner đặc quyền" />
+    </div>
+
+    <div class="exclusive-slider">
+      <div class="product-card" *ngFor="let product of products">
+        <img
+          title="image"
+          [src]="product.image"
+          [alt]="product.name"
+          class="product-image"
+        />
+        <div class="product-name">{{ product.name }}</div>
+
+        <div class="price-section">
+          <span class="price">{{ product.price | number }}<sup>đ</sup></span>
+          <span class="original-price" *ngIf="product.originalPrice">
+            {{ product.originalPrice | number }}<sup>đ</sup>
+          </span>
+          <span class="discount" *ngIf="product.discount">
+            -{{ product.discount }}%
+          </span>
+        </div>
+
+        <div class="rating">
+          ⭐ {{ product.rating }} • Đã bán {{ product.sold }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+<div class="exclusive-wrapper">
+  <h2 class="title">Sản Phẩm Đặc Quyền</h2>
+
+  <div class="exclusive-content">
+    <!-- Banner bên trái -->
+    <div class="exclusive-banner">
+      <img src="assets/img/home/bannerdq.png" alt="Banner đặc quyền" />
+    </div>
+
+    <!-- Vùng sản phẩm với nút điều hướng -->
+    <div class="product-slider-container">
+      <button class="nav-btn left" (click)="scrollLeft()">‹</button>
+
+      <div class="product-slider" #slider>
+        <div class="product-card" *ngFor="let product of products">
+          <img
+            title="image"
+            [src]="product.image"
+            [alt]="product.name"
+            class="product-image"
+          />
+          <div class="product-name">{{ product.name }}</div>
+
+          <div class="price-section">
+            <span class="price">{{ product.price | number }}<sup>đ</sup></span>
+            <span *ngIf="product.originalPrice" class="original-price">
+              {{ product.originalPrice | number }}<sup>đ</sup>
+            </span>
+            <span *ngIf="product.discount" class="discount"
+              >-{{ product.discount }}%</span
+            >
+          </div>
+
+          <div class="rating">
+            ⭐ {{ product.rating }} • Đã bán {{ product.sold }}
+          </div>
+        </div>
+      </div>
+
+      <button class="nav-btn right" (click)="scrollRight()">›</button>
+    </div>
+  </div>
+</div>

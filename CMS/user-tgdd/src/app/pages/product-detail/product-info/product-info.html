@@ -1,0 +1,42 @@
+<div class="product-info">
+  <div class="promo-banner mb-3">
+    <img
+      src="assets/img/product-detail/banner.png"
+      class="img-fluid rounded"
+      alt="promo"
+    />
+  </div>
+
+  <div class="mb-3">
+    <div class="d-flex flex-wrap gap-2">
+      <button
+        *ngFor="let option of product.storageOptions"
+        class="btn"
+        [ngClass]="{
+        'btn-outline-primary': selectedStorage !== option,
+        'btn-primary': selectedStorage === option
+      }"
+        (click)="selectStorage(option)"
+      >
+        {{ option }}
+      </button>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <div class="d-flex flex-wrap gap-2">
+      <button
+        *ngFor="let color of product.colors"
+        class="btn d-flex align-items-center gap-2 border rounded-pill px-3 py-2"
+        [ngClass]="{ 'btn-outline-secondary': selectedColor !== color, 'active': selectedColor === color }"
+        (click)="selectColor(color)"
+      >
+        <span
+          class="color-dot"
+          [ngStyle]="{ 'background-color': getColorCode(color) }"
+        ></span>
+        <span>{{ color }}</span>
+      </button>
+    </div>
+  </div>
+</div>

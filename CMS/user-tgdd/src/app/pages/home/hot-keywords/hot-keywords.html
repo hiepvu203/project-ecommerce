@@ -1,0 +1,14 @@
+<div class="keywords-wrapper">
+  <h2 class="title">Mọi người cũng tìm kiếm</h2>
+
+  <div class="keywords-list">
+    <a
+      class="keyword"
+      *ngFor="let keyword of keywords"
+      href="#"
+      (click)="onClick(keyword, $event)"
+    >
+      {{ keyword }}
+    </a>
+  </div>
+</div>

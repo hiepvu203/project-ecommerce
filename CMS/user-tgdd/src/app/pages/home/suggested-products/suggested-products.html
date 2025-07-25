@@ -1,0 +1,41 @@
+<div class="suggested-wrapper">
+  <h2 class="title">Gợi ý cho bạn</h2>
+
+  <div class="product-grid">
+    <div
+      class="product-card"
+      *ngFor="let product of suggestedProducts.slice(0, visibleCount)"
+    >
+      <img
+        title="image"
+        [src]="product.image"
+        [alt]="product.name"
+        class="product-image"
+      />
+
+      <div class="product-name">{{ product.name }}</div>
+
+      <div class="price-section">
+        <span class="price">{{ product.price | number }}<sup>đ</sup></span>
+
+        <span *ngIf="product.originalPrice" class="original-price">
+          {{ product.originalPrice | number }}<sup>đ</sup>
+        </span>
+
+        <span *ngIf="product.discount" class="discount">
+          -{{ product.discount }}%
+        </span>
+      </div>
+
+      <div class="rating">
+        <i class="bi bi-star-fill"></i> {{ product.rating }} • Đã bán {{
+        product.sold }}
+      </div>
+    </div>
+  </div>
+  <div class="text-center mt-4" *ngIf="visibleCount < suggestedProducts.length">
+    <button class="btn-show-more" (click)="loadMore()">
+      Xem thêm sản phẩm
+    </button>
+  </div>
+</div>

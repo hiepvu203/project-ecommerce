@@ -1,0 +1,14 @@
+<div class="social-news-wrapper">
+  <h2 class="title">Mạng xã hội thegioididong.com</h2>
+
+  <div class="news-grid">
+    <div class="news-card" *ngFor="let item of socialSections">
+      <img title="image" [src]="item.image" [alt]="item.title" />
+      <p class="news-title">{{ item.title }}</p>
+    </div>
+  </div>
+
+  <div class="text-center mt-3">
+    <a href="#" class="see-more">Xem thêm &gt;</a>
+  </div>
+</div>

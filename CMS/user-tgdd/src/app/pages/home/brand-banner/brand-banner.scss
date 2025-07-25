@@ -1,0 +1,23 @@
+.vivo-week-wrapper {
+  width: 1280px;
+  margin: 24px auto;
+
+  .title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .vivo-banner {
+    img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      object-fit: cover;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+}

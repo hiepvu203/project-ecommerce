@@ -1,0 +1,38 @@
+<app-header></app-header>
+<div class="container-1280 product-detail-page py-3">
+  <!-- Breadcrumb -->
+  <nav class="small mb-2 text-muted">
+    <a href="/category" class="text-decoration-none text-secondary"
+      >Điện thoại</a
+    >
+    ›
+    <span class="name text-dark fw-medium">{{ product.name }}</span>
+  </nav>
+  <app-product-title-rating
+    [name]="product.name"
+    [sold]="product.sold"
+    [rating]="product.rating"
+    [likes]="7220"
+  ></app-product-title-rating>
+
+  <div class="row mt-3">
+    <div class="col-lg-6">
+      <app-product-gallery [images]="product.images"></app-product-gallery>
+      <app-product-commitments></app-product-commitments>
+      <app-product-used-suggestion></app-product-used-suggestion>
+      <app-product-specs [specs]="product.specs"></app-product-specs>
+    </div>
+    <div class="col-lg-6">
+      <app-product-info [product]="product"></app-product-info>
+      <div class="text-muted small mb-1 ps-4">
+        Giá tại
+        <a href="#"
+          >{{ product.city }}
+          <i class="bi bi-chevron-down"></i>
+        </a>
+      </div>
+      <app-product-price-box [product]="product"></app-product-price-box>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

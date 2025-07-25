@@ -1,0 +1,28 @@
+.preferred-stores-wrapper {
+  width: 1280px;
+  margin: 32px auto;
+
+  .title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .store-banner-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+
+    img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      object-fit: cover;
+      transition: transform 0.2s ease;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+}

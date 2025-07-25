@@ -1,0 +1,52 @@
+<div class="online-promo">
+  <h2>Khuyến mãi Online</h2>
+
+  <ul class="category-tabs">
+    <li
+      *ngFor="let cat of categories"
+      (click)="selectCategory(cat.key)"
+      [class.active]="cat.key === selectedCategory"
+    >
+      {{ cat.label }}
+    </li>
+  </ul>
+
+  <div class="product-grid">
+    <div class="product-card" *ngFor="let product of filteredProducts">
+      <div class="image-container">
+        <img [src]="product.image" alt="product" />
+        <img
+          *ngIf="product.label"
+          class="badge"
+          [src]="product.label"
+          alt="label"
+        />
+      </div>
+
+      <div class="info">
+        <h4>{{ product.name }}</h4>
+
+        <div class="config" *ngIf="product.configs?.length">
+          <span *ngFor="let c of product.configs">{{ c }}</span>
+        </div>
+
+        <div class="price">
+          <span class="new">{{ product.price | number }}đ</span>
+          <span class="old">{{ product.oldPrice | number }}đ</span>
+          <span class="discount">-{{ product.discount }}%</span>
+        </div>
+
+        <div class="gift" *ngIf="product.gift">
+          Quà {{ product.gift | number }}đ
+        </div>
+
+        <div class="rating">
+          <span class="star"
+            ><i class="bi bi-star-fill"></i> {{ product.rating }}</span
+          >
+          <span>• Đã bán {{ product.sold }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
