@@ -23,7 +23,7 @@ class UserProfileController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/v1/customer/profile",
+     *     path="/api/v1/profiles",
      *     summary="Lấy thông tin hồ sơ người dùng",
      *     tags={"Customer / Profile"},
      *     security={{"bearerAuth":{}}},
@@ -60,7 +60,7 @@ class UserProfileController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/v1/customer/profile",
+     *     path="/api/v1/profiles",
      *     summary="Cập nhật thông tin hồ sơ người dùng",
      *     tags={"Customer Profile"},
      *     security={{"bearerAuth":{}}},
@@ -116,7 +116,7 @@ class UserProfileController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/v1/customer/profile/avatar",
+     *     path="/api/v1/profile/avatars",
      *     summary="Upload avatar cho người dùng",
      *     tags={"Customer Profile"},
      *     security={{"bearerAuth":{}}},
@@ -175,7 +175,7 @@ class UserProfileController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/v1/customer/profile/change-password",
+     *     path="/api/v1/profiles/passwords/change",
      *     summary="Đổi mật khẩu người dùng",
      *     tags={"Customer Profile"},
      *     security={{"bearerAuth":{}}},

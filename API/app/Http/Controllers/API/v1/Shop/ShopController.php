@@ -175,7 +175,7 @@ class ShopController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/my-shop/locks",
+     *     path="/api/v1/my-shop/locks",
      *     operationId="lockMyShop",
      *     tags={"Shop"},
      *     summary="Lock the current shop",

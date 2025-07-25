@@ -23,7 +23,7 @@ class ShopOrderController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/my-shop/orders",
+     *     path="/api/v1/my-shop/orders",
      *     operationId="shopOrdersIndex",
      *     tags={"Shop / Orders"},
      *     summary="List all sub-orders belonging to the current shop",
@@ -61,7 +61,7 @@ class ShopOrderController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/my-shop/orders/{id}",
+     *     path="/api/v1/my-shop/orders/{id}",
      *     operationId="shopOrderShow",
      *     tags={"Shop / Orders"},
      *     summary="Get detail of a single sub-order",
@@ -103,7 +103,7 @@ class ShopOrderController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/my-shop/orders/{id}/approve",
+     *     path="/api/v1/my-shop/orders/{id}/approvals",
      *     operationId="shopOrderApprove",
      *     tags={"Shop / Orders"},
      *     summary="Approve a sub-order",

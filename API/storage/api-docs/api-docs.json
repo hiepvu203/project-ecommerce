@@ -2492,13 +2492,13 @@
                 ]
             }
         },
-        "/api/v1/customer/profile": {
+        "/api/v1/profiles": {
             "get": {
                 "tags": [
                     "Customer / Profile"
                 ],
                 "summary": "Lấy thông tin hồ sơ người dùng",
-                "operationId": "87adb65bf3f2bf33abfef95fe85ec810",
+                "operationId": "599c07b7da9513ca4f27d44dc500e08f",
                 "responses": {
                     "200": {
                         "description": "Lấy thông tin hồ sơ thành công",
@@ -2543,7 +2543,7 @@
                     "Customer Profile"
                 ],
                 "summary": "Cập nhật thông tin hồ sơ người dùng",
-                "operationId": "6f47eda2638460561d000d79016ccbe0",
+                "operationId": "d58caf4fe9ac9600e2d1f9e7339568e3",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -2597,13 +2597,13 @@
                 ]
             }
         },
-        "/api/v1/customer/profile/avatar": {
+        "/api/v1/profile/avatars": {
             "post": {
                 "tags": [
                     "Customer Profile"
                 ],
                 "summary": "Upload avatar cho người dùng",
-                "operationId": "b86d02da88cb21a031895b3915ec5f60",
+                "operationId": "33b95428064c65e72f9955f5ced6eef1",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -2665,13 +2665,13 @@
                 ]
             }
         },
-        "/api/v1/customer/profile/change-password": {
+        "/api/v1/profiles/passwords/change": {
             "post": {
                 "tags": [
                     "Customer Profile"
                 ],
                 "summary": "Đổi mật khẩu người dùng",
-                "operationId": "d184127508137972b2311f024e875c7f",
+                "operationId": "3e23e63b32db7e2b1e40abd270a1289b",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -3245,7 +3245,7 @@
                 }
             }
         },
-        "/api/my-shop/locks": {
+        "/api/v1/my-shop/locks": {
             "post": {
                 "tags": [
                     "Shop"
@@ -3284,7 +3284,7 @@
                 ]
             }
         },
-        "/api/my-shop/orders": {
+        "/api/v1/my-shop/orders": {
             "get": {
                 "tags": [
                     "Shop / Orders"
@@ -3337,7 +3337,7 @@
                 ]
             }
         },
-        "/api/my-shop/orders/{id}": {
+        "/api/v1/my-shop/orders/{id}": {
             "get": {
                 "tags": [
                     "Shop / Orders"
@@ -3389,7 +3389,7 @@
                 ]
             }
         },
-        "/api/my-shop/orders/{id}/approve": {
+        "/api/v1/my-shop/orders/{id}/approvals": {
             "post": {
                 "tags": [
                     "Shop / Orders"
@@ -3441,7 +3441,7 @@
                 ]
             }
         },
-        "/api/shop/verify-documents": {
+        "/api/v1/shops/verifications/documents": {
             "post": {
                 "tags": [
                     "Shop / Verification"

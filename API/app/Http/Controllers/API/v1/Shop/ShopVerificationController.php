@@ -27,7 +27,7 @@ class ShopVerificationController extends Controller
 
      /**
      * @OA\Post(
-     *     path="/api/shop/verify-documents",
+     *     path="/api/v1/shops/verifications/documents",
      *     operationId="submitShopVerification",
      *     tags={"Shop / Verification"},
      *     summary="Submit verification documents for the shop",
